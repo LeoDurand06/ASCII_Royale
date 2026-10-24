@@ -1,6 +1,12 @@
-# ASCII_Royale
+# ASCII Royale
 
+## Description
 
+Coming Soon...
+
+## How to Use
+
+make clean all : compiles the project
 
 ## To-Do List
 
