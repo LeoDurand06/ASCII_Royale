@@ -19,3 +19,16 @@ make clean all : compiles the project
 - [ ] Local Multiplayer
 - [ ] Online Multiplayer
 - [ ] Cross-Platform
+
+
+## Compile
+
+```console
+gcc -o ascii_royale main.c -lncursew
+```
+
+### For Linux
+```console
+chmod +x ascii_royale
+./ascii_royale
+```
