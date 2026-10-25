@@ -4,10 +4,6 @@
 
 Coming Soon...
 
-## How to Use
-
-make clean all : compiles the project
-
 ## To-Do List
 
 - [ ] Main Menu
@@ -21,10 +17,10 @@ make clean all : compiles the project
 - [ ] Cross-Platform
 
 
-## Compile
+## How to Compile
 
 ```console
-gcc -o ascii_royale main.c -lncursew
+make clean all
 ```
 
 ### For Linux

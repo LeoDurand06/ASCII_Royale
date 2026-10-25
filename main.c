@@ -1,115 +1,121 @@
-#include <ncursesw/ncurses.h>
+#define _DEFAULT_SOURCE
 #include <unistd.h>
-#include <locale.h> // UTF-8 support
+#include <stdio.h>
+#include <locale.h>
+#include <string.h>
+#include <ncursesw/ncurses.h>
 
-#define DELAY 50000
+#define DELAY 100
+#define MENU_COUNT 4
 
-int main() {
+const char *menu[] = {
+    "| Online Multiplayer |",
+    "| Local Multiplayer |",
+    "| Settings |",
+    "| Quit |"
+};
+
+int main(void)
+{
     setlocale(LC_ALL, "");
     initscr();
     noecho();
     curs_set(0);
-    nodelay(stdscr, TRUE);
     keypad(stdscr, TRUE);
+    nodelay(stdscr, TRUE);
 
-    if (FALSE == has_colors())
-    {
+    if (!has_colors()) {
         endwin();
-        printf("Your terminal does not support color\n");
+        printf("Your terminal does not support colors.\n");
         return 1;
     }
 
     start_color();
-    // color pairs (ID, foreground, background).
-    init_color(COLOR_BLACK, 0,0,0);
     init_pair(1, COLOR_WHITE, COLOR_BLACK);
-
+    mousemask(ALL_MOUSE_EVENTS, NULL);
 
     int yMax, xMax;
     getmaxyx(stdscr, yMax, xMax);
 
-    int y = yMax ;
     int x = xMax / 2;
-    int startY=0,startX=0;
+    int menu_sel = 0;
+    int running = 1;
 
-    int menu_sel=0;
-    
-    char ch1 = getch();
-
-    while (1)
-    {
-        clear();
-
+    while (running) {
+        erase();
         attron(COLOR_PAIR(1));
 
-       // mvprintw(startY+3, x-33, "┌─────────────────────────────────────────────────────────────────┐");
-        mvprintw(startY+4,     x-35, "       _    ____   ________      ____                   _        ");
-        mvprintw(startY +5, x-36, "      / \\  / ___| / ___\\ \\ \\    |  _ \\ ___  _   _  __ _| | ___   ");
-        mvprintw(startY + 6, x-36, "     / _ \\ \\___ \\| |    \\ \\ \\   | |_) / _ \\| | | |/ _` | |/ _ \\  ");
-        mvprintw(startY + 7, x-36, "    / ___ \\ ___) | |___  \\ \\ \\  |  _ | (_) | |_| | (_| | |  __/  ");
-        mvprintw(startY + 8, x-36, "   /_/   \\_\\____/ \\____|  \\_\\_\\ |_| \\_\\___/ \\__, |\\__,_|_|\\___|  ");
-        mvprintw(startY + 9, x-36, "--------------------------------------------|___/----------------");
+        mvprintw(4, x-35, "       _    ____   ________      ____                   _        ");
+        mvprintw(5, x-36, "      / \\  / ___| / ___\\ \\ \\    |  _ \\ ___  _   _  __ _| | ___   ");
+        mvprintw(6, x-36, "     / _ \\ \\___ \\| |    \\ \\ \\   | |_) / _ \\| | | |/ _` | |/ _ \\  ");
+        mvprintw(7, x-36, "    / ___ \\ ___) | |___  \\ \\ \\  |  _ | (_) | |_| | (_| | |  __/  ");
+        mvprintw(8, x-36, "   /_/   \\_\\____/ \\____|  \\_\\_\\ |_| \\_\\___/ \\__, |\\__,_|_|\\___|  ");
+        mvprintw(9, x-36, "--------------------------------------------|___/----------------");
 
-        if(menu_sel==0){
-            attron(A_STANDOUT);
-            mvprintw(startY+13, x-49, "| Online Multiplayer |");
-            attroff(A_STANDOUT);
-            mvprintw(startY+13, x-21, "| Local Multiplayer |");
-            mvprintw(startY+13, x+10, "| Settings |");
-            mvprintw(startY+13, x+29, "| Quit |");
-        }
-        if(menu_sel==1){
+        int positions[] = {x-49, x-21, x+10, x+29};
+
+        for (int i = 0; i < MENU_COUNT; i++) {
             
-            mvprintw(startY+13, x-49, "| Online Multiplayer |");
-            attron(A_STANDOUT);
-            mvprintw(startY+13, x-21, "| Local Multiplayer |");
-            attroff(A_STANDOUT);
-            mvprintw(startY+13, x+10, "| Settings |");
-            mvprintw(startY+13, x+29, "| Quit |");
-        }
-        if(menu_sel==2){
-            
-            mvprintw(startY+13, x-49, "| Online Multiplayer |");
-            mvprintw(startY+13, x-21, "| Local Multiplayer |");
-            attron(A_STANDOUT);
-            mvprintw(startY+13, x+10, "| Settings |");
-            attroff(A_STANDOUT);
-            mvprintw(startY+13, x+29, "| Quit |");
-        }
-        if(menu_sel==3){
-            mvprintw(startY+13, x-49, "| Online Multiplayer |");
-            mvprintw(startY+13, x-21, "| Local Multiplayer |");
-            mvprintw(startY+13, x+10, "| Settings |");
-            attron(A_STANDOUT);
-            mvprintw(startY+13, x+29, "| Quit |");
-            attroff(A_STANDOUT);
+            if (i == menu_sel) attron(A_STANDOUT);
+
+            mvprintw(13, positions[i], "%s", menu[i]);
+
+            if (i == menu_sel) attroff(A_STANDOUT);
+
         }
 
-        int ch1 = getch();
+        mvprintw(yMax-6, 2,
+                 "[ Left/Right ] Navigate  [ Enter ] Select  [ Click ] Choose");
+        mvprintw(yMax-2, x-13, "By Adrice & Heroharley");
 
-        if (ch1 == KEY_LEFT) {
-            if (menu_sel - 1 < 0) 
-                menu_sel = 3; 
-            else 
-                menu_sel--;
-        } 
-        else if (ch1 == KEY_RIGHT) {
-            if (menu_sel + 1 > 3) 
-                menu_sel = 0; 
-            else 
-                menu_sel++;
-        }
-
-
-        mvprintw(yMax - 6, x - 30, "[ ◄ ] Left   [ ► ] Right   [ ↵ / Enter ] Select");
-
-        mvprintw(yMax - 2,x-13,"By Adrice & Heroharley");
-
+        /* refresh only after drawing the complete screen */
         refresh();
+
+        int ch = getch();
+
+        if (ch == KEY_LEFT) {
+            if (menu_sel - 1 < 0) menu_sel = 3; 
+            else menu_sel--;
+        }
+        else if (ch == KEY_RIGHT) {
+            if (menu_sel + 1 > 3) menu_sel = 0; 
+            else menu_sel++;
+        }
+        else if (ch == '\n' || ch == '\r' || ch == KEY_ENTER) {
+
+            /* if we do ENTER when [QUIT] button is selected */
+            if (menu_sel == 3) running = 0;
+        }
+
+        /* when we click with mouse */
+        else if (ch == KEY_MOUSE) {
+            MEVENT event;
+
+            if (getmouse(&event) == OK && event.y == 13) {
+
+                for (int i = 0; i < MENU_COUNT; i++) {
+                    int width = (int)strlen(menu[i]);
+
+                    if (event.x >= positions[i] &&
+                        event.x < positions[i] + width) {
+                        menu_sel = i;
+
+                        /* if we select [QUIT] button */
+                        if (i == 3)
+                            running = 0;
+
+                        break;
+                    }
+
+                }
+
+            }
+
+        }
+
         usleep(DELAY);
     }
 
     endwin();
-
     return 0;
 }
