@@ -1,5 +1,9 @@
 # ASCII Royale
 
+WEBSITE: 
+Our official website can be found at [ASCII Royale](http://ascii-royale.mooo.com "Official ASCII Royale Website"), sadly we don't have HTTPS, only HTTP.
+
+
 ## Description
 
 Coming Soon...
