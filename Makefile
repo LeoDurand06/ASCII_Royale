@@ -3,7 +3,7 @@ CFLAGS = -Wall -Wextra -std=c11
 LDLIBS = -lncursesw
 TARGET = program
 
-SRCS = $(wildcard *.c)
+SRCS = $(wildcard *.c) $(wildcard menus/*.c)
 OBJS = $(SRCS:.c=.o)
 
 all: $(TARGET)
